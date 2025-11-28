@@ -1,122 +1,110 @@
 #include "circular_buffer.h"
 #include <stdio.h>
+#include <inttypes.h>
+#include <unistd.h>
 
-int main() {
-
-    // pravimo tri casual bafera
-    CircularBuffer cb1, cb2, cb3;
-    CircularInit(&cb1);
-    CircularInit(&cb2);
-    CircularInit(&cb3);
-
-    printf("1\n");
-    printf("cb1: "); { CircularDump(&cb1); } printf("\n");
-    printf("cb2: "); { CircularDump(&cb2); } printf("\n");
-    printf("cb3: "); { CircularDump(&cb3); } printf("\n");
-
-    printf("\npush u cb1\n");
-    for (int i = 0; i <= 9; i++) {
-        if (!CircularIsFull(&cb1)) {
-            CircularPush(&cb1, i);
-            printf("ubacujem %d\n", i);
-        } else {
-            printf("ne mogu da ubacim %d :(\n", i);
-        }
-    }
-    printf("cb1 sada: "); { CircularDump(&cb1); } printf("\n");
-
-    printf("\npop 3 elementa iz cb1\n");
-    for (int i = 0; i < 3; i++) {
-        if (!CircularIsEmpty(&cb1)) {
-            int v = CircularPop(&cb1);
-            printf("popujem %d\n", v);
-        } else {
-            printf("bafer prazan\n");
-        }
-    }
-    printf("cb1 posle popa: "); { CircularDump(&cb1); } printf("\n");
-
-    printf("\nwrap-around push u cb1 \n");
-    for (int i = 0; i < 5; i++) {
-        if (!CircularIsFull(&cb1)) {
-            CircularPush(&cb1, i);
-            printf("ubacujem %d\n", i);
-        } else {
-            printf("ne mogu da ubacim %d :(\n", i);
-        }
-    }
-    printf("cb1 posle wrap-around: "); { CircularDump(&cb1); } printf("\n");
-
-    printf("\ncb2 i cb3 punimo brojevima ===\n");
-    for (int i = 0; i < 6; i++) { CircularPush(&cb2, i); }
-    for (int i = 0; i < 6; i++) { CircularPush(&cb3, i); }
-    printf("cb2: "); { CircularDump(&cb2); } printf("\n");
-    printf("cb3: "); { CircularDump(&cb3); } printf("\n");
-
-    printf("\npraznim cb2\n");
-    CircularEmptyBuff(&cb2);
-    printf("cb2: "); { CircularDump(&cb2); } printf("\n");
-
-    printf("\npop iz praznog cb2\n");
-    if (!CircularIsEmpty(&cb2)) {
-        int v = CircularPop(&cb2);
-        printf("popujem %d\n", v);
-    } else {
-        printf("bafer prazan, nema sta da se popuje\n");
-    }
-
-    CircularBuffer cb4, cb5, cb6;
-
-    CircularInit(&cb4);
-    CircularInit(&cb5);
-    CircularInit(&cb6);
-
-    for (int i = 0; i < 5; i++) {
-        CircularPush(&cb4, i);
-        printf("ubacujem %d\n", i);
-    }
-    printf("cb4: "); CircularDump(&cb4); printf("\n");
-
-    for (int i = 0; i < 2; i++) {
-        int v = CircularPop(&cb4);
-        printf("popujem %d\n", v);
-    }
-    printf("cb4 posle popa: "); CircularDump(&cb4); printf("\n");
-
-    for (int i = 10; i < 15; i++) {
-        CircularPush(&cb5, i);
-        printf("ubacujem %d\n", i);
-    }
-    printf("cb5: "); CircularDump(&cb5); printf("\n");
-
-    for (int i = 50; i < 55; i++) {
-        CircularPush(&cb6, i);
-        printf("ubacujem %d\n", i);
-    }
-    printf("cb6: "); CircularDump(&cb6); printf("\n");
-
-    CircularEmptyBuff(&cb5);
-    printf("cb5 posle praznjenja: "); CircularDump(&cb5); printf("\n");
-
-
-    return 0;
+void ritual_pause(const char* incantation) {
+    printf("*** %s ***\n", incantation);
+    fflush(stdout);
+    usleep(400000); // 0.4 sekunde dramatične pauze
 }
-//gcc -c circular_buffer.c -o circular_buffer.o
-//ar rcs libcircular.a circular_buffer.o
-//gcc main.c -L. -lcircular -o boze
 
-/*
+int main(void) {
+ 
+    sleep(1);
 
-gcc -c circular_buffer.c -o circular_buffer.o
-ar rcs libcircular.a circular_buffer.o
-gcc main.c -L. -lcircular -o boze
+    ritual_pause("Creating three vessels from the void...");
+    CircularBufferHandle abyss1 = CircularBuffer_CreateUltimate();
+    CircularBufferHandle abyss2 = CircularBuffer_CreateUltimate();
+    CircularBufferHandle abyss3 = CircularBuffer_CreateUltimate();
 
-gcc main.c -L. -lcircular -o boze
+    ritual_pause("Dumping initial state of the nether realms...");
+    CircularBuffer_DumpToAbyss(abyss1, "PRIMORDIAL_VOID_1");
+    CircularBuffer_DumpToAbyss(abyss2, "PRIMORDIAL_VOID_2");
+    CircularBuffer_DumpToAbyss(abyss3, "PRIMORDIAL_VOID_3");
 
-ar t libcircular.a
+    ritual_pause("Feeding the first demon (0..14)...");
+    for (int i = 0; i <= 14; i++) {
+        CircularBufferStatus st = CircularBuffer_EnqueueWithQuantumEntanglement(abyss1, i * 111, 0);
+        if (st == CB_STATUS_FULL) {
+            printf("\033[93mThe abyss rejects %d — it is satiated!\033[0m\n", i * 111);
+        } else {
+            printf("Injected soul %d into the void\n", i * 111);
+        }
+    }
+    CircularBuffer_DumpToAbyss(abyss1, "FIRST_DEMON_FED");
 
-mv libricular.a libcircular.a
+    ritual_pause("Extracting three lost souls from the first circle...");
+    for (int i = 0; i < 3; i++) {
+        CircularBufferStatus st;
+        buffer_type soul = CircularBuffer_DequeueWithTemporalDistortion(abyss1, &st, 0);
+        if (st == CB_STATUS_OK)
+            printf("→ Released soul: %d\n", soul);
+        else
+            printf("→ The void is silent... (status: 0x%04X)\n", st);
+    }
+    CircularBuffer_DumpToAbyss(abyss1, "POST_EXTRACTION");
 
-gcc main.c -L. -lcircular -o boze
+    ritual_pause("Performing wrap-around sacrifice...");
+    for (int i = 0; i < 7; i++) {
+        CircularBufferStatus st = CircularBuffer_EnqueueWithQuantumEntanglement(abyss1, 666 + i, 0);
+        if (st == CB_STATUS_OK)
+            printf("Sacrificed %d to achieve circular transcendence\n", 666 + i);
+    }
+    CircularBuffer_DumpToAbyss(abyss1, "CIRCULAR_TRANSCENDENCE_ACHIEVED");
 
-*/
+    ritual_pause("Populating secondary and tertiary voids...");
+    for (int i = 0; i < 8; i++) {
+        CircularBuffer_EnqueueWithQuantumEntanglement(abyss2, i * 10, 0);
+        CircularBuffer_EnqueueWithQuantumEntanglement(abyss3, i * 100, 0);
+    }
+    CircularBuffer_DumpToAbyss(abyss2, "SECONDARY_VOID");
+    CircularBuffer_DumpToAbyss(abyss3, "TERTIARY_VOID");
+
+    ritual_pause("Performing total annihilation of secondary void...");
+    CircularBuffer_InvokeTotalAnnihilation(abyss2);
+    CircularBuffer_DumpToAbyss(abyss2, "ANNIHILATED_VOID");
+
+    ritual_pause("Attempting to extract from the annihilated...");
+    buffer_type ghost = CircularBuffer_DequeueWithTemporalDistortion(abyss2, NULL, 0);
+    printf("Ghost value from the ashes: 0x%08X\n", ghost);
+
+    // Bonus: stvaramo još nekoliko prokletih bafera
+    ritual_pause("Raising additional legions...");
+    CircularBufferHandle legion[6];
+    const char* legion_names[] = {"WRATH", "GREED", "LUST", "ENVY", "GLUTTONY", "PRIDE"};
+    
+    for (int i = 0; i < 6; i++) {
+        legion[i] = CircularBuffer_CreateUltimate();
+        for (int j = 0; j < 5; j++) {
+            CircularBuffer_EnqueueWithQuantumEntanglement(legion[i], 0xDEAD + i * 100 + j, 0);
+        }
+        CircularBuffer_DumpToAbyss(legion[i], legion_names[i]);
+    }
+
+    ritual_pause("Final reckoning — count of trapped souls");
+    for (int i = 0; i < 6; i++) {
+        size_t count = CircularBuffer_GetMeaningOfLife(legion[i]);
+        printf("%s carries %zu damned souls\n", legion_names[i], count);
+    }
+
+    ritual_pause("Is the first circle full? %s", 
+           CircularBuffer_IsSchrodingerFull(abyss1) ? "YES — ETERNAL TORMENT" : "no");
+    ritual_pause("Is the annihilated circle empty? %s",
+           CircularBuffer_IsSchrodingerEmpty(abyss2) ? "YES" : "QUANTUM ANOMALY DETECTED");
+
+
+
+    CircularBuffer_DestroyApocalyptic(abyss1);
+    CircularBuffer_DestroyApocalyptic(abyss2);
+    CircularBuffer_DestroyApocalyptic(abyss3);
+    for (int i = 0; i < 6; i++) {
+        CircularBuffer_DestroyApocalyptic(legion[i]);
+    }
+
+    printf("\033[91mAll souls freed. The void is silent once more.\033[0m\n");
+    printf("...or is it?\n");
+    sleep(2);
+
+    return 0xDEAD;
+}
