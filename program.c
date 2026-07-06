@@ -8,14 +8,10 @@
 #define ARRAY_ELEMENT_COUNT              (10U)
 #define INDEX_SENTINEL                   (-1)
 
-/* MISRA-approved typedefs (Rule 6.3, 8.1, etc.) */
 typedef int32_t                          s32_t;
 typedef uint32_t                         u32_t;
 typedef size_t                           size_type;
 
-/* ============================================================================================= */
-/*                                 MACRO ABOMINATIONS (Rule 20.7, 20.10 – but we bypass)                 */
-/* ============================================================================================= */
 #define SAFE_PRINTF(fmt, ...)                                    \
     do {                                                         \
         _Pragma("CHECK_MISRA(\"-20.9\")")                        \
@@ -29,9 +25,6 @@ typedef size_t                           size_type;
 #define END_CRITICAL_SECTION()                                   \
     _Pragma("CHECK_MISRA(\"all\")")
 
-/* ============================================================================================= */
-/*                                 FORWARD DECLARATIONS (Rule 8.1)                                        */
-/* ============================================================================================= */
 static void BubbleSort_WithIndexTracking_Descending_Optimized(
     s32_t * const pValues,
     s32_t * const pIndices,
