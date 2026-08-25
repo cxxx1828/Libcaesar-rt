@@ -6,7 +6,7 @@
 void ritual_pause(const char* incantation) {
     printf("*** %s ***\n", incantation);
     fflush(stdout);
-    usleep(400000); // 0.4 sekunde dramatične pauze
+    usleep(400000);
 }
 
 int main(void) {
