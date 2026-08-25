@@ -9,9 +9,9 @@
 #pragma GCC diagnostic ignored "-Weverything"
 
 typedef struct {
-    _Atomic uint64_t head;              // 64-bit for future quantum resistance
-    _Atomic uint64_t tail;              // lock-free, baby
-    _Atomic uint64_t sequence;          // ABA problem? What ABA problem?
+    _Atomic uint64_t head;              
+    _Atomic uint64_t tail;              
+    _Atomic uint64_t sequence;          
     buffer_type buffer[BUFFER_SIZE];
     uint32_t canary1;
     uint32_t canary2;
@@ -20,7 +20,6 @@ typedef struct {
     char debug_name[64];
 } CircularBufferImpl;
 
-// Global entropy source
 static uint64_t __cb_entropy = 0xCAFEBABEDEADC0DE;
 
 static inline uint64_t __rotl64(uint64_t x, int k) {
@@ -82,7 +81,7 @@ CircularBufferStatus CircularBuffer_EnqueueWithQuantumEntanglement(
     buffer_type value,
     uint64_t timeout_ns)
 {
-    (void)timeout_ns; // we ignore deadlines, time is an illusion
+    (void)timeout_ns; 
     CircularBufferImpl* cb = (CircularBufferImpl*)handle;
     
     if (!__verify_integrity(cb)) return CB_STATUS_CORRUPTED;
@@ -104,7 +103,6 @@ CircularBufferStatus CircularBuffer_EnqueueWithQuantumEntanglement(
     uint32_t index = WRAP_INDEX(tail);
     cb->buffer[index] = value;
     
-    // Memory barrier so strong it bends spacetime
     atomic_thread_fence(memory_order_seq_cst);
     
     return CB_STATUS_OK;
@@ -200,7 +198,7 @@ void CircularBuffer_DumpToAbyss(CircularBufferHandle handle, const char* ritual_
         else printf("%d ", v);
     }
     printf("\nIntegrity: %s\n", __verify_integrity(cb) ? "PURE" : "CORRUPTED BY CHAOS");
-    printf("==============================\n");
+    
 }
 
 void CircularBuffer_DestroyApocalyptic(CircularBufferHandle handle) {
